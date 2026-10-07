@@ -1,0 +1,6 @@
+node_modules/
+dist/
+.idea/
+research/
+test-results/
+official-home.html

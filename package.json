@@ -1,0 +1,18 @@
+{
+  "name": "ottoyami-redesign",
+  "version": "1.0.0",
+  "description": "OTTOYAMI — an editorial restaurant website, built with native HTML, CSS and JavaScript.",
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/serve.mjs",
+    "build": "node scripts/build.mjs",
+    "preview": "node scripts/serve.mjs --production",
+    "test": "node scripts/check.mjs",
+    "test:browser": "node scripts/browser-check.mjs"
+  },
+  "private": true,
+  "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "@playwright/test": "^1.63.0"
+  }
+}

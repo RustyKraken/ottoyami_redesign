@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict';
+import { readFile, access } from 'node:fs/promises';
+import { RESERVATION_URL } from '../src/config.mjs';
+const html = await readFile('dist/index.html', 'utf8');
+assert.equal((html.match(/<h1\b/g)||[]).length, 1, 'Exactly one H1');
+assert(!html.includes('�'), 'Valid UTF-8 content');
+const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);
+assert.equal(ids.length, new Set(ids).size, 'Unique IDs');
+for (const [,id] of html.matchAll(/href="#([^"]+)"/g)) assert(ids.includes(id), `Anchor ${id} exists`);
+for (const [,url] of html.matchAll(/(?:src|href)="(\/[^"#]+)"/g)) await access('dist'+url);
+for (const [,set] of html.matchAll(/srcset="([^"]+)"/g)) for(const part of set.split(',')) await access('dist'+part.trim().split(' ')[0]);
+for (const [,tag] of html.matchAll(/(<a[^>]+>Tisch reservieren[^<]*)/g)) assert(tag.includes(RESERVATION_URL), 'Consistent reservation URL');
+const schema=JSON.parse(html.match(/application\/ld\+json">(.*?)<\/script>/s)[1]);
+assert.equal(schema['@type'],'Restaurant');
+assert.equal(schema.address.postalCode,'1060');
+assert.equal(schema.openingHoursSpecification[0].closes,'22:30');
+console.log('Passed: HTML structure, navigation anchors, local assets, booking configuration and structured data.');

@@ -1,0 +1,68 @@
+[
+  {
+    "name": "shared-table",
+    "source": "https://images.squarespace-cdn.com/content/v1/60c9a6cddbeb56748cb1b99d/130120d0-e9ac-4258-900a-6455612dc269/4I9A7714.jpg",
+    "width": 2500,
+    "height": 1667
+  },
+  {
+    "name": "ipad-ordering",
+    "source": "https://images.squarespace-cdn.com/content/v1/60c9a6cddbeb56748cb1b99d/f97a7cd6-48d4-4333-b76a-442cc54ddc45/4I9A7669.jpg",
+    "width": 2500,
+    "height": 3750
+  },
+  {
+    "name": "dining-room",
+    "source": "https://images.squarespace-cdn.com/content/v1/60c9a6cddbeb56748cb1b99d/1623843355130-KQ3VVI5FE7OVCN5RW6KQ/4.jpg",
+    "width": 1500,
+    "height": 1125
+  },
+  {
+    "name": "sushi-platter",
+    "source": "https://images.squarespace-cdn.com/content/v1/60c9a6cddbeb56748cb1b99d/1623836154406-6DN8B19C4RHMUIO6N60A/19181591719905_.pic.jpg",
+    "width": 1080,
+    "height": 1620
+  },
+  {
+    "name": "grilled-skewers",
+    "source": "https://images.squarespace-cdn.com/content/v1/60c9a6cddbeb56748cb1b99d/8b7c56ff-b3c9-49c1-b2c6-7dbd4c93c169/19031591702802_.pic.jpg",
+    "width": 1620,
+    "height": 1080
+  },
+  {
+    "name": "salmon-roll",
+    "source": "https://images.squarespace-cdn.com/content/v1/60c9a6cddbeb56748cb1b99d/b6eca859-f873-4174-a3a1-97dac2269fb2/Aburi_Salmon_roll.jpg",
+    "width": 2500,
+    "height": 1667
+  },
+  {
+    "name": "restaurant",
+    "source": "https://images.squarespace-cdn.com/content/v1/60c9a6cddbeb56748cb1b99d/1623843338902-CEVLYSTCBV6GN0Q9D3LK/3.jpg",
+    "width": 1500,
+    "height": 1125
+  },
+  {
+    "name": "courtyard",
+    "source": "https://images.squarespace-cdn.com/content/v1/60c9a6cddbeb56748cb1b99d/1623843334730-YBUFDRCPFJZWLVKSFYJE/7.jpg",
+    "width": 1500,
+    "height": 1125
+  },
+  {
+    "name": "bar",
+    "source": "https://images.squarespace-cdn.com/content/v1/60c9a6cddbeb56748cb1b99d/1623842538981-2KD16QPVVZRM6VIDK3KX/1.jpg",
+    "width": 1500,
+    "height": 1125
+  },
+  {
+    "name": "chef",
+    "source": "https://images.squarespace-cdn.com/content/v1/60c9a6cddbeb56748cb1b99d/1623835766672-CAC2QAMFGJLCXGGVPYJQ/Unbenannt-1-04.jpg",
+    "width": 2439,
+    "height": 2505
+  },
+  {
+    "name": "great-wave",
+    "source": "Client-supplied illustration \"Ukiyo-e Wave with Mount Fuji.png\" (1672x941), traced to public/assets/great-wave.svg with potrace (turdSize 12, integer coordinates)",
+    "width": 1672,
+    "height": 896
+  }
+]
