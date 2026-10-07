@@ -1,7 +1,7 @@
 /* OTTOYAMI design system: shared tokens first, components second. */
-@font-face{font-family:Editorial;src:url('/assets/editorial-regular.woff2') format('woff2');font-style:normal;font-weight:400;font-display:swap}
-@font-face{font-family:Editorial;src:url('/assets/editorial-italic.woff2') format('woff2');font-style:italic;font-weight:400;font-display:swap}
-@font-face{font-family:'DM Sans';src:url('/assets/sans.woff2') format('woff2');font-style:normal;font-weight:400 600;font-display:swap}
+@font-face{font-family:Editorial;src:url('assets/editorial-regular.woff2') format('woff2');font-style:normal;font-weight:400;font-display:swap}
+@font-face{font-family:Editorial;src:url('assets/editorial-italic.woff2') format('woff2');font-style:italic;font-weight:400;font-display:swap}
+@font-face{font-family:'DM Sans';src:url('assets/sans.woff2') format('woff2');font-style:normal;font-weight:400 600;font-display:swap}
 :root{
  /* Dark, warm sumi palette (default): red stays the brand colour for surfaces, a lighter red carries text. */
  --color-primary:#85362F;--color-primary-dark:#672A25;--color-primary-soft:#B76A62;--color-highlight:#E08A78;--color-paper:#F5EBDD;
@@ -9,7 +9,7 @@
  --color-footer:#0D0B09;--color-footer-text:#F2E8DA;--color-border:#4A3E31;--color-accent:#C89763;--color-blossom:#E592A3;
  --art-ink:#EADFCF;--bark-1:#8A7D72;--bark-2:#7A6555;--bark-3:#977C66;--trunk-1:#6E5C4D;--trunk-2:#8E7E70;--trunk-3:#B0A496;--limb-1:#7C6552;--limb-2:#9A8270;
  --pond:#4F7F8A40;--ripple:#F5EBDD55;
- --pattern-pricing:url('/assets/seigaiha-dark.svg');--pattern-footer:url('/assets/waves-dark.svg');
+ --pattern-pricing:url('assets/seigaiha-dark.svg');--pattern-footer:url('assets/waves-dark.svg');
  color-scheme:dark;
  --space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:24px;--space-6:32px;--space-7:48px;--space-8:64px;--space-9:96px;--space-10:128px;--space-11:160px;
  --font-display:Editorial,Georgia,serif;--font-body:'DM Sans',Arial,sans-serif;
@@ -23,7 +23,7 @@
  --color-footer:#303338;--color-footer-text:#F5EBDD;--color-border:#D6B992;--color-blossom:#C45D75;
  --art-ink:#13253A;--bark-1:#4A3F38;--bark-2:#3A2E27;--bark-3:#5A4636;--trunk-1:#4E3E32;--trunk-2:#7A6A5C;--trunk-3:#A4988C;--limb-1:#4A3A2E;--limb-2:#6B5646;
  --pond:#4F8A9426;--ripple:#13253A33;
- --pattern-pricing:url('/assets/seigaiha-light.svg');--pattern-footer:url('/assets/waves-light.svg');
+ --pattern-pricing:url('assets/seigaiha-light.svg');--pattern-footer:url('assets/waves-light.svg');
  color-scheme:light;
 }
 *,*::before,*::after{box-sizing:border-box}
@@ -138,7 +138,7 @@ button:active,.button:active{transform:translateY(1px)}
 .wave-section{position:relative;overflow:hidden;padding-block:var(--space-9) 0;min-height:calc(100vw * .536 + 140px)}
 .wave-art{position:absolute;left:0;right:0;bottom:0;aspect-ratio:1672/896;pointer-events:none}
 /* The observed wrapper keeps its size; only the inner ink is clipped, so the reveal observer still fires. */
-.wave-ink{position:absolute;inset:0;background:var(--art-ink);-webkit-mask:url('/assets/great-wave.svg') center/100% 100% no-repeat;mask:url('/assets/great-wave.svg') center/100% 100% no-repeat;opacity:.92;clip-path:inset(0);transition:clip-path 2200ms var(--ease),opacity 1200ms var(--ease)}
+.wave-ink{position:absolute;inset:0;background:var(--art-ink);-webkit-mask:url('assets/great-wave.svg') center/100% 100% no-repeat;mask:url('assets/great-wave.svg') center/100% 100% no-repeat;opacity:.92;clip-path:inset(0);transition:clip-path 2200ms var(--ease),opacity 1200ms var(--ease)}
 .wave-art.awaiting-reveal .wave-ink{clip-path:inset(0 100% 0 0);opacity:0}
 .wave-copy{width:36%;margin-left:auto;position:relative;z-index:1;background:var(--color-background);box-shadow:0 0 0 16px var(--color-background)}
 .wave-copy>p{max-width:400px;margin-top:var(--space-6);color:var(--color-ink-soft)}

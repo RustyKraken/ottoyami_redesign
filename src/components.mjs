@@ -14,7 +14,7 @@ export function VerticalLabel(text) { return `<span class="vertical-label" lang=
 export function ImageFrame(name,alt,options={}) {
   const {className='',eager=false,sizes='(max-width: 767px) 100vw, 40vw',width=1000,height=1250}=options;
   const largestWidth = name==='shared-table' ? 1920 : name==='sushi-platter' ? 1080 : 1440;
-  return `<div class="image-frame ${className}"><img src="/assets/ottoyami-${name}-960.webp" srcset="/assets/ottoyami-${name}-480.webp 480w, /assets/ottoyami-${name}-960.webp 960w, /assets/ottoyami-${name}-${name==='shared-table'?1920:1440}.webp ${largestWidth}w" sizes="${sizes}" width="${width}" height="${height}" alt="${alt}" ${eager?'fetchpriority="high"':'loading="lazy"'} decoding="async"></div>`;
+  return `<div class="image-frame ${className}"><img src="assets/ottoyami-${name}-960.webp" srcset="assets/ottoyami-${name}-480.webp 480w, assets/ottoyami-${name}-960.webp 960w, assets/ottoyami-${name}-${name==='shared-table'?1920:1440}.webp ${largestWidth}w" sizes="${sizes}" width="${width}" height="${height}" alt="${alt}" ${eager?'fetchpriority="high"':'loading="lazy"'} decoding="async"></div>`;
 }
 export function Logo() { return LogoWide(); }
 export function Navigation() {

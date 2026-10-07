@@ -7,8 +7,11 @@ assert(!html.includes('�'), 'Valid UTF-8 content');
 const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);
 assert.equal(ids.length, new Set(ids).size, 'Unique IDs');
 for (const [,id] of html.matchAll(/href="#([^"]+)"/g)) assert(ids.includes(id), `Anchor ${id} exists`);
-for (const [,url] of html.matchAll(/(?:src|href)="(\/[^"#]+)"/g)) await access('dist'+url);
-for (const [,set] of html.matchAll(/srcset="([^"]+)"/g)) for(const part of set.split(',')) await access('dist'+part.trim().split(' ')[0]);
+// Local assets must be relative so the site also works from a subpath (GitHub Pages).
+assert(!/(?:src|href|srcset|data-image)="\/(?!\/)/.test(html), 'No root-absolute local paths');
+assert(!/url\(['"]?\/(?!\/)/.test(await readFile('dist/styles.css', 'utf8')), 'No root-absolute CSS urls');
+for (const [,url] of html.matchAll(/(?:src|href|data-image)="(?![a-z]+:|#|\/\/)([^"#]+)"/g)) await access('dist/'+url);
+for (const [,set] of html.matchAll(/srcset="([^"]+)"/g)) for(const part of set.split(',')) await access('dist/'+part.trim().split(' ')[0]);
 for (const [,tag] of html.matchAll(/(<a[^>]+>Tisch reservieren[^<]*)/g)) assert(tag.includes(RESERVATION_URL), 'Consistent reservation URL');
 const schema=JSON.parse(html.match(/application\/ld\+json">(.*?)<\/script>/s)[1]);
 assert.equal(schema['@type'],'Restaurant');
