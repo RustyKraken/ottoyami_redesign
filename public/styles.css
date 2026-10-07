@@ -240,6 +240,7 @@ button:active,.button:active{transform:translateY(1px)}
 /* Contact */
 .contact-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:var(--space-10)}
 .contact-main .button-group{margin-top:var(--space-7)}
+.contact-lead{max-width:440px;margin-top:var(--space-6);color:var(--color-ink-soft)}
 .contact-details{display:grid;gap:var(--space-6);padding-top:var(--space-2)}
 .contact-details .eyebrow{color:var(--color-highlight);font-size:.6875rem;margin-bottom:var(--space-4)}
 address{font-style:normal}
