@@ -11,6 +11,10 @@ npm run dev
 
 Open http://127.0.0.1:5173. The dev command builds on startup; after editing templates or CSS, run `npm run build` and refresh. `npm run preview` serves the existing build. Deploy the contents of `dist/` to any static host.
 
+## GitHub Pages
+
+Every push to `main` runs `.github/workflows/deploy.yml`, which builds, runs `npm test` and publishes `dist/` to https://rustykraken.github.io/ottoyami_redesign/. All local asset references (HTML, CSS, gallery images) are relative, so the same build works at a domain root and under a repository subpath; `npm test` fails if a root-absolute local path (`/assets/…`) is introduced. One-time setup: in the repository settings under **Pages**, set **Source** to **GitHub Actions**.
+
 ## Project guide
 
 - `src/config.mjs`: verified restaurant information, all prices, review excerpts, and the single `RESERVATION_URL` used by every booking link.

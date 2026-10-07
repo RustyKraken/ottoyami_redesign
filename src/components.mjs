@@ -1,6 +1,7 @@
 import { restaurant as r, RESERVATION_URL } from './config.mjs';
 import { Blossom, LogoWide, LogoSquare } from './artwork.mjs';
-export const arrow = '<span aria-hidden="true">↗</span>';
+// U+FE0E forces the text glyph; without it iOS/Android render ↗ as an emoji.
+export const arrow = '<span aria-hidden="true">↗\uFE0E</span>';
 export function Container(content, className='') { return `<div class="container ${className}">${content}</div>`; }
 export function Section(id, content, className='') { return `<section id="${id}" class="section ${className}" aria-labelledby="${id}-title">${content}</section>`; }
 export function SectionHeading(id, eyebrow, title, extra='') { return `<div class="section-heading reveal"><p class="eyebrow">${eyebrow}</p><h2 id="${id}-title">${title}</h2>${extra}</div>`; }

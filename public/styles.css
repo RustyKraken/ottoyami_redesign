@@ -8,7 +8,7 @@
  --color-background:#15120F;--color-background-alt:#1D1915;--color-ink:#F2E8DA;--color-ink-soft:#B5A893;
  --color-footer:#0D0B09;--color-footer-text:#F2E8DA;--color-border:#4A3E31;--color-accent:#C89763;--color-blossom:#E592A3;
  --art-ink:#EADFCF;--bark-1:#8A7D72;--bark-2:#7A6555;--bark-3:#977C66;--trunk-1:#6E5C4D;--trunk-2:#8E7E70;--trunk-3:#B0A496;--limb-1:#7C6552;--limb-2:#9A8270;
- --pond:#4F7F8A40;--ripple:#F5EBDD55;
+ --koi-opacity:.15;--line-art:#5E4C39;
  --pattern-pricing:url('assets/seigaiha-dark.svg');--pattern-footer:url('assets/waves-dark.svg');
  color-scheme:dark;
  --space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:24px;--space-6:32px;--space-7:48px;--space-8:64px;--space-9:96px;--space-10:128px;--space-11:160px;
@@ -22,7 +22,7 @@
  --color-highlight:#85362F;--color-background:#F5EBDD;--color-background-alt:#EFE1CF;--color-ink:#13253A;--color-ink-soft:#536170;
  --color-footer:#303338;--color-footer-text:#F5EBDD;--color-border:#D6B992;--color-blossom:#C45D75;
  --art-ink:#13253A;--bark-1:#4A3F38;--bark-2:#3A2E27;--bark-3:#5A4636;--trunk-1:#4E3E32;--trunk-2:#7A6A5C;--trunk-3:#A4988C;--limb-1:#4A3A2E;--limb-2:#6B5646;
- --pond:#4F8A9426;--ripple:#13253A33;
+ --koi-opacity:.22;--line-art:#D9BA8E;
  --pattern-pricing:url('assets/seigaiha-light.svg');--pattern-footer:url('assets/waves-light.svg');
  color-scheme:light;
 }
@@ -161,6 +161,13 @@ button:active,.button:active{transform:translateY(1px)}
 /* Menu pricing, no cards */
 .pricing-section{background:var(--color-background-alt);border-block:1px solid var(--color-border);position:relative;isolation:isolate}
 .pricing-section::before{content:'';position:absolute;inset:0 0 auto;height:300px;background:var(--pattern-pricing) center top/60px 30px;-webkit-mask-image:linear-gradient(#000a,#0006 45%,transparent);mask-image:linear-gradient(#000a,#0006 45%,transparent);z-index:-1;pointer-events:none}
+/* Koi swim slowly behind the prices, faded so the numbers stay first. */
+.pricing-section{overflow:hidden}
+.koi-backdrop{position:absolute;inset:0;z-index:-1;opacity:var(--koi-opacity);pointer-events:none;-webkit-mask-image:linear-gradient(transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(transparent,#000 12%,#000 88%,transparent)}
+.koi-backdrop svg{display:block;width:100%;height:100%}
+.koi{will-change:transform}
+.kb-ripple{stroke:var(--color-ink);stroke-width:1.5;transform-box:fill-box;transform-origin:center;animation:kb-ripple 3.4s ease-out forwards}
+@keyframes kb-ripple{from{transform:scale(.15);opacity:.9}to{transform:scale(2.2);opacity:0}}
 .pricing-header{display:flex;justify-content:space-between;align-items:flex-end;gap:var(--space-7);margin-bottom:var(--space-8)}
 .pricing-header>p{color:var(--color-ink-soft);max-width:320px}
 .price-row{display:grid;grid-template-columns:48px 1.2fr 1fr auto;gap:var(--space-5);align-items:center;padding-block:var(--space-6);border-top:1px solid var(--color-border)}
@@ -182,13 +189,6 @@ button:active,.button:active{transform:translateY(1px)}
 .sakura-art>.sakura-bloom{position:absolute;inset:0}
 .sb-flower,.sb-bud{transform-box:fill-box;transform-origin:50% 50%}
 .sakura-art{z-index:1}
-/* Koi pond beneath the branch: petals fall into it and the koi wander slowly. */
-.koi-pond{position:absolute;left:-8%;bottom:-8%;width:74%;aspect-ratio:8/5;border-radius:50%;background:radial-gradient(ellipse at 50% 50%,var(--pond),transparent 70%);pointer-events:none}
-.koi-pond svg{display:block;width:100%;height:100%;overflow:visible}
-.koi-pond .pond-rings{stroke:var(--ripple);stroke-width:.8}
-.koi{will-change:transform}
-.pond-ripple{position:absolute;left:var(--x);top:var(--y);width:44px;height:20px;margin:-10px 0 0 -22px;border:1px solid var(--ripple);border-radius:50%;pointer-events:none;animation:pond-ripple 2.6s ease-out forwards}
-@keyframes pond-ripple{from{transform:scale(.2);opacity:1}to{transform:scale(1.8);opacity:0}}
 .sakura-petals{position:absolute;inset:0;pointer-events:none}
 .falling-petal{position:absolute;left:var(--x);top:var(--y);width:var(--size,12px);height:calc(var(--size,12px)*.82);border-radius:70% 70% 55% 55%/80% 80% 35% 35%;background:radial-gradient(circle at 50% 95%,#E592A3,#F6CFD5 55%,#FBE6E8);box-shadow:inset 0 -1px 0 #d99aa4;animation:petal-drop var(--dur,7s) cubic-bezier(.45,.05,.55,.95) forwards}
 .falling-petal::after{content:'';position:absolute;top:-2px;left:calc(50% - 2px);width:4px;height:4px;background:var(--color-background);transform:rotate(45deg)}
@@ -373,7 +373,6 @@ address{font-style:normal}
  .pricing-bottom>p{font-size:.75rem}
  .steps-grid{grid-template-columns:1fr;gap:var(--space-6)}
  .sakura-branch{width:100%;margin-top:var(--space-5)}
- .koi-pond{left:-4%;width:72%}
  .steps-list{padding-top:0}
  .step{grid-template-columns:40px 1fr;gap:var(--space-5);padding-block:var(--space-5)}
  .step>span{font-size:2.5rem}
@@ -427,6 +426,17 @@ address{font-style:normal}
  .lightbox img{height:60svh}
  .lightbox figcaption{font-size:.75rem}
 }
+/* Temporary dragon sky: fine line drawing behind the gallery, drawn stroke by stroke on scroll. */
+.gallery-section{position:relative;overflow:hidden}
+.gallery-section>.container{position:relative;z-index:1}
+.dragon-sky{position:absolute;inset:0;color:var(--line-art);pointer-events:none;-webkit-mask-image:linear-gradient(transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(transparent,#000 8%,#000 92%,transparent);--draw:0}
+.dragon-sky svg{display:block;width:100%;height:100%;stroke-width:1.7}
+.dragon-sky path{stroke-dasharray:1 1;stroke-dashoffset:calc(1 - clamp(0,(var(--draw) - var(--s)) / var(--d),1))}
+.dragon-sky .sky-fine{stroke-width:1.1}
+.dragon-sky .sky-dot{fill:currentColor;stroke:none;opacity:clamp(0,(var(--draw) - var(--s)) / var(--d),1)}
+.sky-dragon{animation:sky-float 10s ease-in-out infinite alternate}
+@keyframes sky-float{from{transform:translate(0,-6px)}to{transform:translate(10px,6px)}}
+@media(max-width:767px){.dragon-sky svg{stroke-width:2.2}}
 @media(prefers-reduced-motion:reduce){
  html{scroll-behavior:auto}
  *,*::before,*::after{animation:none!important;transition:none!important}

@@ -110,30 +110,44 @@ export function SakuraTree() {
   return `<svg class="sakura-tree" viewBox="0 0 1000 420" aria-hidden="true">${defs}<g fill="none" stroke="url(#st-bark)" stroke-linecap="round" filter="url(#st-rough)">${limbs.join('')}</g>${trunk}${leaves.map(([x,y,r,s,red])=>use('st-leaf',[x,y,s,r],` fill="${red?'#9A5B3B':'#8C9150'}"`)).join('')}${buds.map(([x,y,r,s])=>use('st-bud',[x,y,s,r])).join('')}${blooms.map(b=>use(b[5]?'st-flower2':'st-flower',b)).join('')}</svg>`;
 }
 
-// Koi seen from above, head toward +x. One body silhouette, four classic varieties painted inside it.
-const KOI_BODY = 'M60 0C60-12 48-20 30-21C5-22-25-14-48-5C-56-2-56 2-48 5C-25 14 5 22 30 21C48 20 60 12 60 0Z';
-const KOI_FIN = 'M27-16C18-38-2-52-20-50C-8-40 6-29 18-17Z';
-const KOI_TAIL = 'M-44 0C-62-6-82-26-106-34C-98-18-93-7-86 0C-93 7-98 18-106 34C-82 26-62 6-44 0Z';
+// Koi seen from above, head toward +x, about 270 units nose to tail. The body is cut into three nested
+// segments so app.js can bend it into a swimming S-curve; markings live in one shared drawing per variety.
+const KOI_BODY = 'M100 0C100-19 85-33 58-36C20-39-30-29-78-10C-90-5-90 5-78 10C-30 29 20 39 58 36C85 33 100 19 100 0Z';
+const KOI_HEAD = 'M58-36C85-33 100-19 100 0C100 19 85 33 58 36C66 20 66-20 58-36Z';
+const KOI_TAIL = 'M-80 0C-96-6-116-26-146-44C-154-48-160-44-157-37C-150-24-140-12-136 0C-140 12-150 24-157 37C-160 44-154 48-146 44C-116 26-96 6-80 0Z';
+const KOI_PECTORAL = 'M54-28C46-50 26-70 4-74C-4-75-6-70-1-63C4-58 6-54 10-52C20-44 34-34 46-26Z';
+const KOI_PELVIC = 'M-18-24C-26-36-40-42-50-40C-50-36-46-33-44-31C-38-27-32-24-24-20Z';
+const KOI_DORSAL = 'M30 0C14-6-10-7-34-2C-36 0-36 0-34 2C-10 7 14 6 30 0Z';
+// Soft-edged markings: each patch is drawn twice, a slightly larger faint copy feathers the edge.
+const patch = (d,color) => `<path d="${d}" fill="${color}" stroke="${color}" stroke-width="4" stroke-opacity=".35" stroke-linejoin="round"/>`;
 const koiVarieties = {
   // Kohaku: white with red patches.
-  kohaku: {base:'#F7F1E8', marks:'<ellipse cx="38" cy="-3" rx="17" ry="13" fill="#D8432B"/><path d="M14 10C6-8 22-18 6-20C-8-14-4 4-14 14C-2 20 10 18 14 10Z" fill="#D8432B"/><ellipse cx="-30" cy="-3" rx="13" ry="7" fill="#D8432B"/>', fin:'#FBF7F1'},
-  // Tancho: white with a single red crown, the most Japanese of all koi.
-  tancho: {base:'#F8F4EE', marks:'<circle cx="40" cy="0" r="9.5" fill="#D23A2A"/>', fin:'#FBF8F3'},
-  // Yamabuki ogon: solid gold with a lighter back.
-  yamabuki: {base:'#F0A13A', marks:'<path d="M58 0C40-6 0-8-46 0C0 8 40 6 58 0Z" fill="#F8C66A" opacity=".8"/><g fill="#F9D58E" opacity=".55">'+Array.from({length:14},(_,i)=>`<circle cx="${40-i*6}" cy="${(i%2?4:-4)}" r="1.4"/>`).join('')+'</g>', fin:'#F6C978'},
-  // Showa: black body with red and white.
-  showa: {base:'#211D1F', marks:'<path d="M54 0C50-14 34-18 22-12C30-2 26 10 40 14C50 12 56 8 54 0Z" fill="#D8432B"/><path d="M12-20C2-10 0 6-8 20C4 20 14 14 18 4C20-6 18-14 12-20Z" fill="#F4EDE3"/><ellipse cx="-24" cy="2" rx="12" ry="7" fill="#D8432B"/>', fin:'#E9E2D8'},
+  kohaku: {base:'#F8F3EA', scale:'dark', fin:'#FBF7F1', marks:patch('M98-6C94-24 70-32 52-26C44-14 46 10 56 22C74 28 96 16 98-6Z','#D8432B')+patch('M26 34C10 6 34-26 14-38C-8-36-14-10-4 6C2 20 12 32 26 34Z','#D8432B')+patch('M-24-22C-42-16-58-4-62 6C-46 14-30 8-22-4C-18-10-18-18-24-22Z','#D8432B')+patch('M-56 4C-62 8-68 10-74 10C-70 4-64 2-56 4Z','#D8432B')},
+  // Showa: black body with red and white, black at the base of the pectoral fins (motoguro).
+  showa: {base:'#1F1B1D', scale:'light', fin:'#ECE5DB', finBase:'#1F1B1D', marks:patch('M98 0C94-22 66-34 44-24C56-6 46 14 66 26C88 26 100 14 98 0Z','#D8432B')+patch('M24-38C6-20 2 8-12 36C8 38 26 24 32 6C36-10 34-28 24-38Z','#F4EDE3')+patch('M-30-14C-48-12-64-4-70 4C-56 12-38 10-26 2Z','#D8432B')+patch('M-8 20C-20 30-34 28-44 22C-32 16-18 14-8 20Z','#F4EDE3')},
+  // Yamabuki ogon: metallic gold with a lighter, glinting back.
+  yamabuki: {base:'#EC9A30', scale:'light', fin:'#F7CD7C', marks:'<path d="M98 0C70-12 10-16-86 0C10 16 70 12 98 0Z" fill="#F9CC72" opacity=".75"/><path d="M90 0C60-6 10-8-70 0C10 8 60 6 90 0Z" fill="#FFE6A8" opacity=".6"/>'},
 };
+const scalePattern = ([name,line,glint]) => `<pattern id="kb-scales-${name}" width="11" height="9" patternUnits="userSpaceOnUse"><path d="M0 9A5.5 5.5 0 0 1 11 9M-5.5 4.5A5.5 5.5 0 0 1 5.5 4.5M5.5 4.5A5.5 5.5 0 0 1 16.5 4.5" fill="none" stroke="${line}" stroke-width=".8"/><path d="M2.5 7.6A3.6 3.6 0 0 1 6 6M8 3.1A3.6 3.6 0 0 1 11.5 1.5" fill="none" stroke="${glint}" stroke-width=".9" stroke-linecap="round"/></pattern>`;
+const koiDefs = () => `<defs><clipPath id="kb-body"><path d="${KOI_BODY}"/></clipPath><clipPath id="kb-front"><rect x="16" y="-60" width="100" height="120"/></clipPath><clipPath id="kb-mid"><rect x="-34" y="-60" width="58" height="120"/></clipPath><clipPath id="kb-rear"><rect x="-100" y="-60" width="74" height="120"/></clipPath>${[['light','#ffffff','#ffffff'],['dark','#7A5A3A','#ffffff']].map(scalePattern).join('')}<linearGradient id="kb-shade" x1="0" y1="-38" x2="0" y2="38" gradientUnits="userSpaceOnUse"><stop stop-color="#000" stop-opacity=".38"/><stop offset=".28" stop-color="#000" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".24"/><stop offset=".72" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".38"/></linearGradient><radialGradient id="kb-head-light" cx="80" cy="0" r="34" gradientUnits="userSpaceOnUse"><stop stop-color="#fff" stop-opacity=".28"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient><radialGradient id="kb-shadow"><stop stop-color="#000" stop-opacity=".5"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>${Object.entries(koiVarieties).map(([name,v])=>`<linearGradient id="kb-fin-${name}" x1="1" y1="1" x2="0" y2="0"><stop stop-color="${v.fin}" stop-opacity=".9"/><stop offset="1" stop-color="${v.fin}" stop-opacity=".3"/></linearGradient><linearGradient id="kb-tailfin-${name}" x1="1" x2="0"><stop stop-color="${v.fin}" stop-opacity=".9"/><stop offset=".7" stop-color="${v.fin}" stop-opacity=".45"/><stop offset="1" stop-color="${v.fin}" stop-opacity=".2"/></linearGradient><g id="kb-art-${name}" clip-path="url(#kb-body)"><path d="${KOI_BODY}" fill="${v.base}"/>${v.marks}<rect x="-100" y="-40" width="162" height="80" fill="url(#kb-scales-${v.scale})" opacity="${v.scale==='light'?.2:.3}"/><path d="${KOI_HEAD}" fill="url(#kb-head-light)"/><path d="${KOI_BODY}" fill="url(#kb-shade)"/><path d="M92 0C60-3 0-3-84 0" stroke="#fff" stroke-opacity=".32" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M56-22C30-26-20-21-72-8M56 22C30 26-20 21-72 8" stroke="${v.scale==='light'?'#fff':'#5A4030'}" stroke-opacity=".35" stroke-width="1.2" stroke-dasharray="1 3.5" fill="none" stroke-linecap="round"/><path d="M64-31C54-14 54 14 64 31" stroke="#000" stroke-opacity=".24" stroke-width="1.4" fill="none"/><path d="M70-27C62-12 62 12 70 27" stroke="#fff" stroke-opacity=".22" stroke-width="1.6" fill="none"/></g>`).join('')}</defs>`;
+const finRays = (n,from,to,bend=0) => Array.from({length:n},(_,i)=>{const k=i/(n-1),x=to[0][0]+(to[1][0]-to[0][0])*k,y=to[0][1]+(to[1][1]-to[0][1])*k;return `M${from[0]} ${from[1]}Q${f((from[0]+x)/2+bend)} ${f((from[1]+y)/2+bend)} ${f(x)} ${f(y)}`;}).join('');
 function koi(variety,[x,y,angle,scale]) {
   const v=koiVarieties[variety];
-  const fin=(side)=>`<path class="koi-fin" d="${KOI_FIN}" transform="scale(1 ${side})" fill="${v.fin}" fill-opacity=".7" stroke="#ffffff55" stroke-width=".6"/><path d="M24-17L-14-46M22-17L-4-44M20-17L4-38" transform="scale(1 ${side})" stroke="#ffffff70" stroke-width=".6" class="koi-fin-rays"/>`;
-  return `<g class="koi" data-variety="${variety}" transform="translate(${x} ${y}) rotate(${angle}) scale(${scale})"><ellipse cx="0" cy="6" rx="62" ry="20" fill="#000" opacity=".16" class="koi-shadow"/><g class="koi-tail"><path d="${KOI_TAIL}" fill="${v.fin}" fill-opacity=".72"/><path d="M-50 0L-100-28M-50 0L-96-16M-50 0L-90-5M-50 0L-90 5M-50 0L-96 16M-50 0L-100 28" stroke="#ffffff70" stroke-width=".7"/></g>${fin(1)}${fin(-1)}<path d="M-14 13C-22 22-30 24-36 22C-30 18-24 14-20 11ZM-14-13C-22-22-30-24-36-22C-30-18-24-14-20-11Z" fill="${v.fin}" fill-opacity=".6"/><g clip-path="url(#koi-clip)"><path d="${KOI_BODY}" fill="${v.base}"/>${v.marks}<path d="M50 0C30-2 0-2-46 0" stroke="#fff" stroke-opacity=".28" stroke-width="3" fill="none"/></g><path d="${KOI_BODY}" fill="none" stroke="#00000022" stroke-width=".8"/><circle cx="48" cy="-9.5" r="1.6" fill="#1b1b1b"/><circle cx="48" cy="9.5" r="1.6" fill="#1b1b1b"/></g>`;
+  const fin=(d,rays,side,cls,base='')=>`<g class="${cls}"><g transform="scale(1 ${side})"><path d="${d}" fill="url(#kb-fin-${variety})"/>${base}<path d="${rays}" stroke="#fff" stroke-opacity=".6" stroke-width=".9" fill="none" stroke-linecap="round"/><path d="${d}" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width=".6"/></g></g>`;
+  const motoguro=v.finBase?`<path d="M54-28C48-38 40-44 30-47C34-38 40-31 47-25Z" fill="${v.finBase}" opacity=".85"/>`:'';
+  const pectoral=s=>fin(KOI_PECTORAL,finRays(7,[50,-28],[[0,-70],[44,-30]],2),s,'kb-pectoral',motoguro);
+  const pelvic=s=>fin(KOI_PELVIC,finRays(5,[-20,-22],[[-48,-39],[-26,-22]]),s,'kb-pelvic');
+  const art=clip=>`<use href="#kb-art-${variety}" clip-path="url(#kb-${clip})"/>`;
+  const tail=`<g class="kb-tail"><path d="${KOI_TAIL}" fill="url(#kb-tailfin-${variety})"/><path d="${finRays(11,[-84,0],[[-153,-41],[-153,41]],3)}" stroke="#fff" stroke-opacity=".55" stroke-width=".9" fill="none" stroke-linecap="round"/><path d="${KOI_TAIL}" fill="none" stroke="#fff" stroke-opacity=".3" stroke-width=".6"/></g>`;
+  const dorsal=`<path d="${KOI_DORSAL}" fill="${v.fin}" fill-opacity=".5"/><path d="${Array.from({length:9},(_,i)=>`M${26-i*7} 0L${22-i*7} ${i%2?-3:3}`).join('')}" stroke="#fff" stroke-opacity=".5" stroke-width=".7"/>`;
+  const eye=s=>`<g transform="translate(80 ${s*19})"><circle r="4.2" fill="#C9A35A"/><circle r="2.7" fill="#111"/><circle cx="1" cy="${-s*1}" r="1" fill="#fff" opacity=".9"/></g>`;
+  const head=`${eye(-1)}${eye(1)}<path d="M92-10c2-1 4 0 4 2M92 10c2 1 4 0 4-2" stroke="#000" stroke-opacity=".4" stroke-width="1.1" fill="none" stroke-linecap="round"/><ellipse cx="99" cy="0" rx="2.6" ry="6" fill="#000" opacity=".18"/><path d="M98-6C104-8 108-14 113-14M98 6C104 8 108 14 113 14M99-3C103-3 106-6 108-6M99 3C103 3 106 6 108 6" stroke="${v.fin}" stroke-opacity=".85" stroke-width="1.5" fill="none" stroke-linecap="round"/>`;
+  return `<g class="koi" data-variety="${variety}" transform="translate(${x} ${y}) rotate(${angle}) scale(${scale})"><ellipse cx="8" cy="16" rx="110" ry="40" fill="url(#kb-shadow)" opacity=".35"/>${pectoral(1)}${pectoral(-1)}<g class="kb-mid"><g class="kb-rear">${tail}${pelvic(1)}${pelvic(-1)}${art('rear')}</g>${art('mid')}${dorsal}</g>${art('front')}${head}</g>`;
 }
-// A quiet pond under the sakura branch; app.js lets the koi wander and ripples bloom where petals land.
-export function KoiPond() {
-  const fish=[['kohaku',[130,150,-20,.62]],['tancho',[270,100,160,.54]]];
-  const rings=[[90,120,26],[290,160,18],[200,200,34]].map(([x,y,r])=>`<ellipse cx="${x}" cy="${y}" rx="${r}" ry="${r*.45}"/>`).join('');
-  return `<div class="koi-pond" aria-hidden="true"><svg viewBox="0 0 400 250"><defs><clipPath id="koi-clip"><path d="${KOI_BODY}"/></clipPath></defs><g class="pond-rings" fill="none">${rings}</g>${fish.map(([v,p])=>koi(v,p)).join('')}</svg></div>`;
+// Three koi swimming a slow figure of eight behind the All You Can Eat prices; app.js sets the rhythm.
+export function KoiBackdrop() {
+  const fish=[['kohaku',[600,350,0,1]],['showa',[440,250,0,.94]],['yamabuki',[300,170,0,.88]]];
+  return `<div class="koi-backdrop" aria-hidden="true"><svg viewBox="0 0 1200 700" preserveAspectRatio="xMidYMid slice">${koiDefs()}<g class="kb-ripples" fill="none"></g>${fish.map(([v,p])=>koi(v,p)).join('')}</svg></div>`;
 }
 
 // Stamp-style line ornaments in the brand red: chopsticks, peony, water and a koi.
@@ -145,6 +159,10 @@ export function Peony() {
   return ornament('peony','-6 -6 76 76',`${leaves}<path d="${scallop(17,7,4,0)}" fill="var(--color-background)"/><path d="${scallop(11,5,3,.6)}"/><path d="M32 26C38 26 40 32 36 36C32 40 26 36 27 31C28 27 33 27 34 31"/>`);
 }
 export const WaterLines = () => ornament('water','0 0 64 64',Array.from({length:4},(_,i)=>`<path d="M${17+i*9} 2C${11+i*9} 8 ${23+i*9} 14 ${17+i*9} 20C${11+i*9} 26 ${23+i*9} 32 ${17+i*9} 38C${11+i*9} 44 ${23+i*9} 50 ${17+i*9} 56"/>`).join(''));
-export const KoiLine = () => ornament('koi','-100 -50 170 100',`<g transform="rotate(-35)"><path d="${KOI_BODY}"/><path d="${KOI_TAIL}"/><path d="${KOI_FIN}"/><path d="${KOI_FIN}" transform="scale(1 -1)"/><path d="M-50 0L-86-14M-50 0L-86 14" stroke-width="1.4"/>${Array.from({length:5},(_,i)=>`<path d="M${24-i*13} -14C${18-i*13} -6 ${18-i*13} 6 ${24-i*13} 14" stroke-width="1.4"/>`).join('')}<circle cx="48" cy="-9" r="1.5" fill="currentColor"/><circle cx="48" cy="9" r="1.5" fill="currentColor"/></g>`);
+// The small line koi keeps its own simpler silhouette.
+const LINE_KOI_BODY = 'M60 0C60-12 48-20 30-21C5-22-25-14-48-5C-56-2-56 2-48 5C-25 14 5 22 30 21C48 20 60 12 60 0Z';
+const LINE_KOI_FIN = 'M27-16C18-38-2-52-20-50C-8-40 6-29 18-17Z';
+const LINE_KOI_TAIL = 'M-44 0C-62-6-82-26-106-34C-98-18-93-7-86 0C-93 7-98 18-106 34C-82 26-62 6-44 0Z';
+export const KoiLine = () => ornament('koi','-100 -50 170 100',`<g transform="rotate(-35)"><path d="${LINE_KOI_BODY}"/><path d="${LINE_KOI_TAIL}"/><path d="${LINE_KOI_FIN}"/><path d="${LINE_KOI_FIN}" transform="scale(1 -1)"/><path d="M-50 0L-86-14M-50 0L-86 14" stroke-width="1.4"/>${Array.from({length:5},(_,i)=>`<path d="M${24-i*13} -14C${18-i*13} -6 ${18-i*13} 6 ${24-i*13} 14" stroke-width="1.4"/>`).join('')}<circle cx="48" cy="-9" r="1.5" fill="currentColor"/><circle cx="48" cy="9" r="1.5" fill="currentColor"/></g>`);
 // One quiet band of stamps, used once as the opening divider instead of scattering them around the page.
 export const OrnamentDivider = () => `<div class="ornament-divider" aria-hidden="true"><span></span>${Chopsticks()}${Peony()}${WaterLines()}${KoiLine()}<span></span></div>`;

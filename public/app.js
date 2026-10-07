@@ -158,73 +158,103 @@ themeToggle.addEventListener('click', () => {
   try { localStorage.setItem('ottoyami-theme', theme); } catch {}
 });
 
-// Koi pond: each fish wanders with a gentle random heading, turns back toward the centre near the edge
-// and beats its tail. Ripples appear where petals land on the water and now and then on their own.
-const pond = document.querySelector('.koi-pond');
-if (pond) {
-  const W = 400, H = 250;
-  const fish = [...pond.querySelectorAll('.koi')].map((el, i) => {
-    const [, x, y, a, s] = el.getAttribute('transform').match(/translate\(([-\d.]+) ([-\d.]+)\) rotate\(([-\d.]+)\) scale\(([-\d.]+)\)/).map(Number);
-    return { el, tail: el.querySelector('.koi-tail'), fins: [...el.querySelectorAll('.koi-fin, .koi-fin-rays')], x, y, a: a * Math.PI / 180, s, speed: 11 + i * 2.5, phase: i * 1.7 };
+// Koi behind the prices swim one after another along a wide figure of eight, in a shared rhythm:
+// two strong tail beats, then a long glide. Each fish starts its strokes a third of a cycle after the
+// one ahead, so the beat runs through the group like a canon. The body bends in a travelling wave
+// (mid body, rear body, tail), leans into the curve and straightens while gliding.
+const koiBackdrop = document.querySelector('.koi-backdrop');
+if (koiBackdrop) {
+  const NS = 'http://www.w3.org/2000/svg';
+  const CYCLE = 3.6, STROKE = 1.4, LAG = .62;
+  const svg = koiBackdrop.querySelector('svg'), rippleLayer = svg.querySelector('.kb-ripples');
+  const path = u => [600 + 470 * Math.sin(u), 350 + 215 * Math.sin(2 * u)];
+  const tangent = u => [470 * Math.cos(u), 430 * Math.cos(2 * u)];
+  const fish = [...svg.querySelectorAll('.koi')].map((el, i) => {
+    const s = +el.getAttribute('transform').match(/scale\(([-\d.]+)\)/)[1];
+    const parts = sel => [...el.querySelectorAll(sel)];
+    return { el, s, i, mid: el.querySelector('.kb-mid'), rear: el.querySelector('.kb-rear'), tail: el.querySelector('.kb-tail'),
+      pectoral: parts('.kb-pectoral'), pelvic: parts('.kb-pelvic'),
+      u: -i * LAG, side: [0, 38, -38][i] || 0, speed: 26, beat: i * 2, a: null, stroking: false };
   });
-  const host = pond.parentElement;
-  const ripple = (x, y) => {
-    const r = document.createElement('span');
-    r.className = 'pond-ripple';
-    r.style.setProperty('--x', `${x}px`);
-    r.style.setProperty('--y', `${y}px`);
-    r.addEventListener('animationend', () => r.remove());
-    host.append(r);
+  const ripple = (x, y, r) => {
+    const ring = document.createElementNS(NS, 'ellipse');
+    ring.setAttribute('cx', x.toFixed(0)); ring.setAttribute('cy', y.toFixed(0));
+    ring.setAttribute('rx', r); ring.setAttribute('ry', (r * .55).toFixed(0));
+    ring.setAttribute('class', 'kb-ripple');
+    ring.addEventListener('animationend', () => ring.remove());
+    rippleLayer.append(ring);
   };
-  const inPond = (x, y) => {
-    const nx = (x - pond.offsetLeft) / pond.offsetWidth - .5, ny = (y - pond.offsetTop) / pond.offsetHeight - .5;
-    return nx * nx + ny * ny < .16;
+  const place = (f, t, dt) => {
+    // Where this fish is in the shared rhythm.
+    const tau = ((t - f.i * CYCLE / 3) % CYCLE + CYCLE) % CYCLE;
+    const stroke = tau < STROKE ? Math.sin(Math.PI * tau / STROKE) : 0;
+    if (stroke && !f.stroking && f.i === 0 && Math.random() < .5) {
+      const [hx, hy] = path(f.u);
+      ripple(hx + Math.cos(f.a || 0) * 95 * f.s, hy + Math.sin(f.a || 0) * 95 * f.s, 40);
+    }
+    f.stroking = stroke > 0;
+    f.speed += (24 + 56 * stroke - f.speed) * Math.min(1, dt * 1.6);
+    f.beat += dt * 2 * Math.PI * (stroke ? 2 / STROKE : .45);
+    const [tx, ty] = tangent(f.u);
+    f.u += f.speed * dt / Math.hypot(tx, ty);
+    const [px, py] = path(f.u), [nx, ny] = tangent(f.u), len = Math.hypot(nx, ny);
+    const x = px - ny / len * f.side, y = py + nx / len * f.side;
+    const a = Math.atan2(ny, nx);
+    const turn = f.a === null || !dt ? 0 : Math.atan2(Math.sin(a - f.a), Math.cos(a - f.a)) / dt;
+    f.a = a;
+    f.turn = (f.turn || 0) + (turn - (f.turn || 0)) * Math.min(1, dt * 3);
+    const amp = .3 + 1.1 * stroke, lean = Math.max(-1, Math.min(1, f.turn)) * -12;
+    const b = k => Math.sin(f.beat - k);
+    f.el.setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${(a * 180 / Math.PI + b(-.4) * 1.6 * amp).toFixed(1)}) scale(${f.s})`);
+    f.mid.setAttribute('transform', `rotate(${(b(0) * 4 * amp + lean * .5).toFixed(1)} 20 0)`);
+    f.rear.setAttribute('transform', `rotate(${(b(1) * 7 * amp + lean * .7).toFixed(1)} -30 0)`);
+    f.tail.setAttribute('transform', `rotate(${(b(2) * 14 * amp + lean).toFixed(1)} -80 0) scale(1 ${(1 - Math.abs(b(2)) * .1 * amp).toFixed(2)})`);
+    // Pectoral fins fold back during the strokes and fan out to steer while gliding.
+    const spread = 1 - stroke;
+    f.pectoral.forEach((fin, k) => fin.setAttribute('transform', `rotate(${((k ? -1 : 1) * (spread * 10 - stroke * 14 + Math.sin(t * 2.2 + f.i + k * Math.PI) * 6 * spread)).toFixed(1)} 50 ${k ? 28 : -28})`));
+    f.pelvic.forEach((fin, k) => fin.setAttribute('transform', `rotate(${((k ? -1 : 1) * (spread * 6 + Math.sin(t * 2.2 + f.i + 1) * 4)).toFixed(1)} -20 ${k ? 22 : -22})`));
   };
-  // Petals from the branch: ripple where a petal finishes over the water.
-  host.addEventListener('animationend', e => {
-    if (!e.target.classList.contains('falling-petal')) return;
-    const st = getComputedStyle(e.target);
-    const x = parseFloat(st.getPropertyValue('--x')) + parseFloat(st.getPropertyValue('--drift')) * .2;
-    const y = parseFloat(st.getPropertyValue('--y')) + parseFloat(st.getPropertyValue('--fall'));
-    if (inPond(x, y)) ripple(x, y);
-  }, true);
-  let pondVisible = false, swimming = false, prev = 0, nextRipple = 0;
+  fish.forEach(f => place(f, 0, 0));
+  let visible = false, running = false, prev = 0;
   const swim = now => {
     const dt = Math.min(.05, (now - (prev || now)) / 1000); prev = now;
-    const t = now / 1000;
-    fish.forEach(f => {
-      const dx = (f.x - W / 2) / (W * .38), dy = (f.y - H / 2) / (H * .34);
-      if (dx * dx + dy * dy > .7) {
-        let diff = Math.atan2(H / 2 - f.y, W / 2 - f.x) - f.a;
-        diff = Math.atan2(Math.sin(diff), Math.cos(diff));
-        f.a += diff * dt * .9;
-      }
-      // Keep a little distance from the other koi so they don't bunch up.
-      fish.forEach(o => {
-        if (o === f) return;
-        const ox = f.x - o.x, oy = f.y - o.y, d = Math.hypot(ox, oy);
-        if (d < 70 && d > 0) {
-          let away = Math.atan2(oy, ox) - f.a;
-          away = Math.atan2(Math.sin(away), Math.cos(away));
-          f.a += away * dt * (70 - d) / 70 * 1.2;
-        }
-      });
-      f.a += Math.sin(t * .35 + f.phase) * .35 * dt;
-      f.x += Math.cos(f.a) * f.speed * dt;
-      f.y += Math.sin(f.a) * f.speed * dt;
-      f.el.setAttribute('transform', `translate(${f.x.toFixed(1)} ${f.y.toFixed(1)}) rotate(${(f.a * 180 / Math.PI).toFixed(1)}) scale(${f.s})`);
-      const beat = Math.sin(t * 3.2 + f.phase);
-      f.tail.setAttribute('transform', `rotate(${(beat * 13).toFixed(1)} -46 0)`);
-      f.fins.forEach((fin, k) => fin.setAttribute('transform', `scale(1 ${k > 1 ? -1 : 1}) rotate(${(Math.sin(t * 2.2 + f.phase) * 9).toFixed(1)} 26 -15)`));
-    });
-    if (now > nextRipple) {
-      nextRipple = now + 3500 + Math.random() * 4000;
-      ripple(pond.offsetLeft + pond.offsetWidth * (.25 + Math.random() * .5), pond.offsetTop + pond.offsetHeight * (.3 + Math.random() * .4));
-    }
-    if (pondVisible && !motion.matches) requestAnimationFrame(swim); else { swimming = false; prev = 0; }
+    fish.forEach(f => place(f, now / 1000, dt));
+    if (visible && !motion.matches) requestAnimationFrame(swim); else { running = false; prev = 0; }
   };
   new IntersectionObserver(([entry]) => {
-    pondVisible = entry.isIntersecting;
-    if (pondVisible && !swimming && !motion.matches) { swimming = true; requestAnimationFrame(swim); }
-  }).observe(pond);
+    visible = entry.isIntersecting;
+    if (visible && !running && !motion.matches) { running = true; requestAnimationFrame(swim); }
+  }).observe(koiBackdrop);
+}
+
+// Temporary dragon sky: the line drawing follows the scroll position, drawn in as the section passes
+// through the viewport and undrawn again when scrolling back up. While it scrolls, a wave runs through
+// the dragon from head to tail, so it winds along its path with the page.
+const sky = document.querySelector('.dragon-sky');
+if (sky) {
+  const section = sky.parentElement;
+  let skyScheduled = false;
+  const drawSky = () => {
+    const box = section.getBoundingClientRect();
+    const progress = (innerHeight * .85 - box.top) / (box.height * .75);
+    sky.style.setProperty('--draw', Math.min(1, Math.max(0, progress)).toFixed(3));
+    if (shapeDragon && box.top < innerHeight && box.bottom > 0) shapeDragon(-box.top * .008);
+    skyScheduled = false;
+  };
+  let shapeDragon = null;
+  if (!motion.matches) import('./dragon.js').then(({ dragonGeometry, SKY_DRAGON }) => {
+    const parts = [...sky.querySelectorAll('[data-part]')], places = [...sky.querySelectorAll('[data-place]')];
+    shapeDragon = phase => {
+      const { paths, places: at } = dragonGeometry(SKY_DRAGON, phase);
+      parts.forEach(el => el.setAttribute('d', paths[el.dataset.part]));
+      places.forEach(el => el.setAttribute('transform', at[el.dataset.place]));
+    };
+    drawSky();
+  }).catch(() => {});
+  if (motion.matches) sky.style.setProperty('--draw', 1);
+  else {
+    addEventListener('scroll', () => { if (!skyScheduled) { skyScheduled = true; requestAnimationFrame(drawSky); } }, { passive: true });
+    addEventListener('resize', drawSky);
+    drawSky();
+  }
 }
