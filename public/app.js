@@ -3,6 +3,23 @@ const toggle = document.querySelector('.menu-toggle');
 const navigation = document.querySelector('#main-navigation');
 const mobile = matchMedia('(max-width: 1100px)');
 const motion = matchMedia('(prefers-reduced-motion: reduce)');
+
+// Hero clip on phones only: desktop keeps the photo and never downloads the video. It plays while the
+// hero is on screen and stays off for reduced motion or data saver.
+const heroVideo = document.querySelector('.hero-video');
+if (heroVideo) {
+  const phone = matchMedia('(max-width: 767px)');
+  let heroVisible = true;
+  const update = () => {
+    const wanted = phone.matches && !motion.matches && !navigator.connection?.saveData;
+    if (wanted && !heroVideo.src) heroVideo.src = heroVideo.dataset.src;
+    if (wanted && heroVisible) heroVideo.play().catch(() => {}); else if (heroVideo.src) heroVideo.pause();
+  };
+  heroVideo.addEventListener('playing', () => heroVideo.classList.add('is-playing'), { once: true });
+  new IntersectionObserver(([entry]) => { heroVisible = entry.isIntersecting; update(); }).observe(heroVideo);
+  phone.addEventListener('change', update);
+  motion.addEventListener('change', update);
+}
 let menuOpen = false;
 function setMenu(open, restoreFocus = false) {
   menuOpen = open;

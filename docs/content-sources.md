@@ -10,6 +10,7 @@ Verified on 7 October 2026. Restaurant information is centralized in `src/config
 | Fresh preparation and Asian cuisine | https://www.ottoyami.at/about-us |
 | Current menu | https://www.ottoyami.at/menu |
 | Reservation page and its Reservly integration | https://www.ottoyami.at/reservation |
+| Hero video for phones (`public/assets/ottoyami-hero.mp4`, 720×1280, 16 s, 1.6 MB) | Provided by the site owner on 7 October 2026 |
 | Official Instagram and Facebook | Links in the official website footer: https://www.instagram.com/otto.yami and https://www.facebook.com/ottoyami |
 
 The implementation uses official restaurant photography downloaded from the Squarespace CDN URLs published by OTTOYAMI. `asset-sources.json` maps descriptive names to original URLs. Images were resized and converted to WebP; original photography remains the respective owner's work and is used for the requested OTTOYAMI redesign. No unrelated stock images are included.
